@@ -1,0 +1,116 @@
+HTMLResult Skip Results Iframe
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angry Droid AI</title>
+  <style>
+    /* CSS styles go here */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .container h1 {
+      font-size: 32px;
+      animation: flickerAnimation 2s linear infinite;
+    }
+
+    .question-container {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    input[type="text"] {
+      padding: 5px;
+    }
+
+    #answer-container {
+      margin-top: 20px;
+    }
+
+    #answer {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    @keyframes flickerAnimation {
+      0% {
+        opacity: 1;
+      }
+      25% {
+        opacity: 0.4;
+      }
+      50% {
+        opacity: 0.9;
+      }
+      75% {
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Angry Droid AI</h1>
+    <div class="question-container">
+      <label for="question">Ask a question:</label>
+      <input type="text" id="question" >
+      <button id="submit">Submit</button>
+    </div>
+    <div id="answer-container">
+      <p id="answer"></p>
+    </div>
+  </div>
+
+  <script>
+    /* JavaScript code goes here */
+    const submitButton = document.getElementById("submit");
+    const answerElement = document.getElementById("answer");
+
+    submitButton.addEventListener("click", function() {
+      const question = document.getElementById("question").value.trim();
+      getAnswer(question)
+        .then(answer => {
+          answerElement.innerText = answer;
+        })
+        .catch(error => {
+          console.error(error);
+          answerElement.innerText = "Oops! Something went wrong.";
+        });
+    });
+
+    async function getAnswer(question) {
+      const questionLC = question.toLowerCase();
+
+      if (questionLC.includes("who") && questionLC.includes("you")) {
+        return "Angry Droid AI is an AI assistant designed to help you with your questions. Ask me anything!";
+      } else {
+        return "I don't know the answer to that question.";
+      }
+    }
+  </script>
+</body>
+</html>
