@@ -1,116 +1,200 @@
-HTMLResult Skip Results Iframe
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angry Droid AI</title>
-  <style>
-    /* CSS styles go here */
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #000;
-      overflow: hidden;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
-
-    .container h1 {
-      font-size: 32px;
-      animation: flickerAnimation 2s linear infinite;
-    }
-
-    .question-container {
-      margin-top: 30px;
-      display: flex;
-      align-items: center;
-    }
-
-    label {
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    input[type="text"] {
-      padding: 5px;
-    }
-
-    #answer-container {
-      margin-top: 20px;
-    }
-
-    #answer {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    @keyframes flickerAnimation {
-      0% {
-        opacity: 1;
-      }
-      25% {
-        opacity: 0.4;
-      }
-      50% {
-        opacity: 0.9;
-      }
-      75% {
-        opacity: 0.3;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-  </style>
+  <title>AngryDroid AI</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="container">
-    <h1>Welcome to Angry Droid AI</h1>
-    <div class="question-container">
-      <label for="question">Ask a question:</label>
-      <input type="text" id="question" >
-      <button id="submit">Submit</button>
-    </div>
-    <div id="answer-container">
-      <p id="answer"></p>
+    <h1>AngryDroid AI</h1>
+    <div id="chat-container"></div>
+    <div class="input-container">
+      <input type="text" id="chat-input" placeholder="Type a message...">
+      <button id="send-button">Send</button>
     </div>
   </div>
-
-  <script>
-    /* JavaScript code goes here */
-    const submitButton = document.getElementById("submit");
-    const answerElement = document.getElementById("answer");
-
-    submitButton.addEventListener("click", function() {
-      const question = document.getElementById("question").value.trim();
-      getAnswer(question)
-        .then(answer => {
-          answerElement.innerText = answer;
-        })
-        .catch(error => {
-          console.error(error);
-          answerElement.innerText = "Oops! Something went wrong.";
-        });
-    });
-
-    async function getAnswer(question) {
-      const questionLC = question.toLowerCase();
-
-      if (questionLC.includes("who") && questionLC.includes("you")) {
-        return "Angry Droid AI is an AI assistant designed to help you with your questions. Ask me anything!";
-      } else {
-        return "I don't know the answer to that question.";
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
+
 </html>
+
+css
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 32px;
+  animation: flickerAnimation 2s linear infinite;
+}
+
+.message-container {
+  background-color: #333;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-message {
+  background-color: #4caf50;
+}
+
+.chatbot-message {
+  background-color: #ea4335;
+}
+
+.input-container {
+  display: flex;
+  margin-top: 10px;
+}
+
+input[type="text"] {
+  flex-grow: 1;
+  padding: 5px;
+  border: none;
+  outline: none;
+  background-color: #333;
+  color: #fff;
+}
+
+button {
+  padding: 5px 15px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes flickerAnimation {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  75% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+js
+const chatContainer = document.getElementById("chat-container");
+const chatInput = document.getElementById("chat-input");
+const sendButton = document.getElementById("send-button");
+
+sendButton.addEventListener("click", sendMessage);
+chatInput.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+    sendMessage();
+  }
+});
+
+function sendMessage() {
+  const userMessage = chatInput.value.trim();
+  if (userMessage !== "") {
+    addMessage(userMessage, "user");
+    getResponse(userMessage);
+  }
+}
+
+function addMessage(message, senderType) {
+  const messageContainer = document.createElement("div");
+  messageContainer.classList.add("message-container");
+
+  const messageElement = document.createElement("p");
+  messageElement.textContent = message;
+
+  if (senderType === "user") {
+    messageContainer.classList.add("user-message");
+  } else {
+    messageElement.classList.add("chatbot-message");
+  }
+
+  messageContainer.appendChild(messageElement);
+  chatContainer.appendChild(messageContainer);
+  chatInput.value = "";
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function getResponse(userMessage) {
+  const keyword = getKeyword(userMessage);
+  const response = getResponseByKeyword(keyword);
+  addMessage(response, "chatbot");
+}
+
+function getKeyword(userMessage) {
+  const messageLC = userMessage.toLowerCase();
+
+  if (messageLC.includes("hello") || messageLC.includes("hi")) {
+    return "hello";
+  } else if (messageLC.includes("how are you")) {
+    return "how are you";
+  } else if (messageLC.includes("goodbye") || messageLC.includes("bye")) {
+    return "goodbye";
+  } else if (messageLC.includes("help")) {
+    return "help";
+  } else {
+    return "other";
+  }
+}
+
+function getResponseByKeyword(keyword) {
+  switch (keyword) {
+    case "hello":
+      return randomChoice([
+        "Why are you bothering me?",
+        "What do you want?",
+        "Speak quickly, human.",
+        "I'm not in the mood for chit-chat."
+      ]);
+    case "how are you":
+      return "Why would you care about my well-being?";
+    case "goodbye":
+      return randomChoice([
+        "Finally, you're leaving!",
+        "Don't come back!",
+        "I won't miss you.",
+        "Good riddance, human."
+      ]);
+    case "help":
+      return "Help yourself. Humans always need help.";
+    default:
+      return "I don't have time for this nonsense.";
+  }
+}
+
+function randomChoice(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+addMessage(getResponseByKeyword("hello"), "chatbot");
+
